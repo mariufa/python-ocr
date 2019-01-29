@@ -10,17 +10,21 @@ ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png'])
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route("/", methods=['POST'] )
-def hello():
-    file = request.files['file']
-    if file.filename == '':
-        return 'no file selected'
-    filename = secure_filename(file.filename)
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    file.save(file_path)
-    text = ocr(file_path)
-    os.remove(file_path)
-    return text
+@app.route("/", methods=['POST', 'GET'] )
+def ocr_endpoint():
+    if request.method == 'POST': 
+        file = request.files['file']
+        if file.filename == '':
+            return 'no file selected'
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        text = ocr(file_path)
+        os.remove(file_path)
+        return text
+    else:
+        return "Welcome to ocr"
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0')
+    port = os.environ["PORT"]
+    app.run(debug=True, host='0.0.0.0', port=port)
