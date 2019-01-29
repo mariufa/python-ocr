@@ -16,10 +16,11 @@ def hello():
     if file.filename == '':
         return 'no file selected'
     filename = secure_filename(file.filename)
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    text = ocr(filename)
-    os.remove(app.config['UPLOAD_FOLDER'] + "/" + filename)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(file_path)
+    text = ocr(file_path)
+    os.remove(file_path)
     return text
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')
